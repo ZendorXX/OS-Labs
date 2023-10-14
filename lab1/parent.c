@@ -61,9 +61,10 @@ int main() {
         close(parent_to_child[WRITE]);
         free(s);
 
-        char buff[1024] = "\0";
-        read(child_to_parent[READ], &buff, sizeof(buff));
-        printf("%s", buff);
+        char buff[] = "\0";
+        while (read(child_to_parent[READ], &buff, sizeof(buff))) {
+            printf("%s", buff);
+        }
         close(child_to_parent[READ]);
     }
     else {
