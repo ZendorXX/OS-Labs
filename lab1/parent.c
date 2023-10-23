@@ -61,11 +61,13 @@ int main() {
         close(parent_to_child[WRITE]);
         free(s);
 
-        char buff[] = "\0";
+        char buff;
         while (read(child_to_parent[READ], &buff, sizeof(buff))) {
-            printf("%s", buff);
+            printf("%c", buff);
         }
         close(child_to_parent[READ]);
+
+        close(out);
     }
     else {
         // child
