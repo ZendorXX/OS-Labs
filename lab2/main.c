@@ -25,14 +25,21 @@ int max(int* array, size_t size) {
 }
 
 int main() {
+    FILE* in = fopen("array.txt", "r");
     size_t size = 0;
     scanf("%ld", &size);
     int* array = (int*) calloc(size, sizeof(int));
     for (size_t i = 0; i < size; ++i) {
-        scanf("%d", &array[i]);
+        //scanf("%d", &array[i]);
+        fscanf(in, "%d", &array[i]);
     }
-    printf("%d", min(array, size));
+    for (size_t i = 0; i < 10; ++i) {
+        printf("%d ", array[i]);
+    }
     printf("\n");
+    printf("min: %d, max: %d\n", min(array, size), max(array, size));
+
     free(array);
+    fclose(in);
     return 0;
 }
