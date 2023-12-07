@@ -1,104 +1,101 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
-#include <math.h>
+
 #include <time.h>
 
 #define MAX 1e9
 #define MIN 1e-9
 
-int *array;
-int *max_nums;
-int *min_nums;
-int thread_no = 0;
+typedef struct {
+    int *array;
+    size_t left, right;
+    int min_value, max_value;
+} Thread_Arguments;
 
 void *solve(void *args) {
-    size_t *boundes = (size_t*)args;
-    size_t left = boundes[0], right = boundes[1];
+    Thread_Arguments *data = (Thread_Arguments*)args;
 
-    int max_value = MIN;
-    int min_value = MAX;
+    int max_tmp = MIN;
+    int min_tmp = MAX;
 
-    for (size_t i = left; i < right; ++i) {
-        if (array[i] > max_value) {
-            max_value = array[i];
+    for (size_t i = data->left; i < data->right; ++i) {
+        if (data->array[i] > max_tmp) {
+            max_tmp = data->array[i];
         } 
-        if (array[i] < min_value) {
-            min_value = array[i];
+        if (data->array[i] < min_tmp) {
+            min_tmp = data->array[i];
         }
     }
-    
-    max_nums[thread_no] = max_value;
-    min_nums[thread_no] = min_value;
-    thread_no++;
-    
+
+    data->max_value = max_tmp;
+    data->min_value = min_tmp;
 
     return NULL;
 }
 
-int main() {
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        printf("Give count of threads as argument.\n");
+        return 0;
+    }
+
     FILE *in = fopen("array.txt", "r");
 
     size_t size = 0;
     fscanf(in, "%ld", &size);
 
-    array = (int*) calloc(size, sizeof(int));
-    max_nums = (int*) calloc(size, sizeof(int));
-    min_nums = (int*) calloc(size, sizeof(int));
+    int threads_count = atoi(argv[1]);
 
+    if (threads_count < 1 || (size_t) threads_count > size) {
+        printf("Invalid count of threads.\n");
+        return -1;
+    }
+
+    int *array = (int*) calloc(size, sizeof(int));
     for (size_t i = 0; i < size; ++i) {
         fscanf(in, "%d", &array[i]);
     }
 
-    printf("Введите количество потоков: ");
-    int threads_count = 1;
-    scanf("%d", &threads_count);
-
     pthread_t thread;
-    size_t step = size / threads_count;
+    Thread_Arguments args[threads_count];
+
+    size_t step = size / (size_t) threads_count;
 
     clock_t time = clock();
     for (int i = 0; i < threads_count; ++i) {
-        size_t *args = (size_t*)calloc(2, sizeof(size_t));
-        args[0] = step * i;
-        args[1] = (i == threads_count - 1) ? size : step * (i + 1);
-        int err = pthread_create(&thread, NULL, solve, args);
-        if (err) {
+        args[i].array = array;
+        args[i].left = step * i;
+        args[i].right = (i == threads_count - 1) ? size : step * (i + 1);
+        args[i].max_value = MIN;
+        args[i].min_value = MAX;
+
+        if ( pthread_create(&thread, NULL, solve, &args[i]) ) {
             perror("pthread_create");
             return -1;
         }
 
-        int err2 = pthread_join(thread, NULL);
-        if (err2) {
+        if ( pthread_join(thread, NULL) ) {
             perror("pthread_join");
             return -1;
         }
     }
     
-    int MAX_value = MIN;
-    int MIN_value = MAX;
+    int max_total = MIN;
+    int min_total = MAX;
 
     for (size_t i = 0; i < (size_t)threads_count; ++i) {    
-        if (max_nums[i] > MAX_value) {
-            MAX_value = max_nums[i];
+        if (args[i].max_value > max_total) {
+            max_total = args[i].max_value;
         } 
-        if (min_nums[i] < MIN_value) {
-            MIN_value = min_nums[i];
+        if (args[i].min_value < min_total) {
+            min_total = args[i].min_value;
         }
     }
     time = clock() - time;
 
-    for (size_t i = 0; i < (size_t)threads_count; ++i) {    
-        printf("%d ", max_nums[i]);
-    }
-    printf("\n");
-    for (size_t i = 0; i < (size_t)threads_count; ++i) {    
-        printf("%d ", min_nums[i]);
-    }
-    printf("\n");
-
     printf("%.10f\n", ((double) time) / CLOCKS_PER_SEC);
-    printf("Min: %d, max: %d\n", MIN_value, MAX_value);
+    printf("Min: %d, max: %d\n", min_total, max_total);
 
     free(array);
     fclose(in);

@@ -1,9 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra
 
-main: generator
+main:
 	$(CC) $(CFLAGS) main.c -lpthread -lm -o main.out
-
-generator:
-	$(CC) $(CFLAGS) generator.c -o generator.out
 
