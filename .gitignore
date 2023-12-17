@@ -4,3 +4,5 @@
 *.out
 *.so
 *.o
+./lab2/array.txt
+*.odt
