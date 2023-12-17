@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
-
 #include <time.h>
+#include <limits.h>
 
-#define MAX 1e9
-#define MIN 1e-9
+#define MAX INT_MAX
+#define MIN INT_MIN
 
 typedef struct {
     int *array;
@@ -57,7 +57,7 @@ int main(int argc, char *argv[]) {
         fscanf(in, "%d", &array[i]);
     }
 
-    pthread_t thread;
+    pthread_t thread[threads_count];
     Thread_Arguments args[threads_count];
 
     size_t step = size / (size_t) threads_count;
@@ -70,17 +70,19 @@ int main(int argc, char *argv[]) {
         args[i].max_value = MIN;
         args[i].min_value = MAX;
 
-        if ( pthread_create(&thread, NULL, solve, &args[i]) ) {
+        if ( pthread_create(&thread[i], NULL, solve, &args[i]) ) {
             perror("pthread_create");
             return -1;
         }
+    }
 
-        if ( pthread_join(thread, NULL) ) {
+    for (int i = 0; i < threads_count; ++i) {
+        if ( pthread_join(thread[i], NULL) ) {
             perror("pthread_join");
             return -1;
         }
     }
-    
+
     int max_total = MIN;
     int min_total = MAX;
 
