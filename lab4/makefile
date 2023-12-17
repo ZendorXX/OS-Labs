@@ -1,6 +1,10 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -pedantic
 
+
+test_prog_2: realisation_1 realisation_2
+	$(CC) $(CFLAGS) test_prog_2.c -o test_prog_2.out -ldl
+
 test_prog_1_1: realisation_1
 	$(CC) $(CFLAGS) test_prog_1.c -o test_prog_1_1.out realisation_1.o
 
