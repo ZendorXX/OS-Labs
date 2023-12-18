@@ -9,8 +9,45 @@
 #include <errno.h>
 
 int main() {
-    char *map;
-    int fd, offset = 0;
+    char *read_map;
+    int read_fd, offset_in = 0;
+    struct stat read_file_info;
+
+    const char *read_file_path = "./mmapCtoP.txt";
+
+    if ((read_fd = open(read_file_path, O_RDWR | O_CREAT, 0664)) == -1) {
+        perror("open");
+        exit(1);
+    }
+
+    if (stat(read_file_path, &read_file_info) == -1) {
+        perror("stat");
+        exit(1);
+    }
+
+    read_map = mmap(0, read_file_info.st_size, PROT_READ, MAP_SHARED, read_fd, 0);
+    if (read_map == MAP_FAILED) {
+        close(read_fd);
+        perror("mmap");
+        exit(1);
+    }
+    while (offset_in < read_file_info.st_size) {
+        printf("%c", read_map[offset_in]);
+        offset_in++;
+    }
+    printf("\n");
+    if (munmap(read_map, read_file_info.st_size) == -1) {
+        close(read_fd);
+        perror("Error un-mmapping the file");
+        exit(1);
+    }
+    close(read_fd);
+
+
+
+
+    char *write_map;
+    int write_fd, offset = 0;
     struct stat fileInfo;
     size_t fileSizeOld, fileSizeNew, textSize;
     
@@ -30,9 +67,8 @@ int main() {
     }
 
     const char *filePath = "./mmapPtoC.txt";
-    printf("We will write text '%s' to '%s'.\n", text, filePath);
 
-    if ((fd = open(filePath, O_RDWR | O_CREAT, 0664)) == -1) {
+    if ((write_fd = open(filePath, O_RDWR | O_CREAT, 0664)) == -1) {
         perror("open");
         exit(1);
     }
@@ -42,56 +78,36 @@ int main() {
         exit(1);
     }
 
-    /*if (fileInfo.st_size != 0) {
-        map = mmap(0, fileInfo.st_size, PROT_READ, MAP_SHARED, fd, 0);
-        if (map == MAP_FAILED) {
-            close(fd);
-            perror("mmap");
-            exit(1);
-        }
-        printf("The content in '%s' before writing:\n", filePath);
-        while (offset < fileInfo.st_size) {
-            printf("%c", map[offset]);
-            offset++;
-        }
-        printf("\n");
-        if (munmap(map, fileInfo.st_size) == -1) {
-            close(fd);
-            perror("Error un-mmapping the file");
-            exit(1);
-        }
-    }*/
-
     fileSizeOld = fileInfo.st_size;
     
     textSize = strlen(text);
     fileSizeNew = fileInfo.st_size + textSize;
 
-    if (ftruncate(fd, fileSizeNew) == -1) {
-        close(fd);
+    if (ftruncate(write_fd, fileSizeNew) == -1) {
+        close(write_fd);
         perror("Error resizing the file");
         exit(1);
     }
 
-    map = mmap(0, fileSizeNew, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-    if (map == MAP_FAILED) {
-        close(fd);
+    write_map = mmap(0, fileSizeNew, PROT_READ | PROT_WRITE, MAP_SHARED, write_fd, 0);
+    if (write_map == MAP_FAILED) {
+        close(write_fd);
         perror("mmap");
         exit(1);
     }
     for (size_t i = 0; i < textSize; i++) {
-        map[i+fileSizeOld] = text[i];
+        write_map[i+fileSizeOld] = text[i];
     }
 
-    if (msync(map, fileSizeNew, MS_SYNC) == -1) {
+    if (msync(write_map, fileSizeNew, MS_SYNC) == -1) {
         perror("Could not sync the file to disk");
     }
 
-    if (munmap(map, fileSizeNew) == -1) {
-        close(fd);
+    if (munmap(write_map, fileSizeNew) == -1) {
+        close(write_fd);
         perror("Error un-mmapping the file");
         exit(1);
     }
     
-    close(fd);
+    close(write_fd);
 }
