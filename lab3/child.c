@@ -9,12 +9,6 @@
 #include <errno.h>
 
 int main() {
-    int out = 0;
-    if ((out = open("data.txt", O_RDWR)) == -1) {
-        perror("open");
-        exit(1);
-    }
-
     char *map_in;
     int fd_in, offset = 0;
     struct stat fileInInfo;
@@ -38,13 +32,11 @@ int main() {
         map_in = mmap(0, fileInInfo.st_size, PROT_READ, MAP_SHARED, fd_in, 0);
         if (map_in == MAP_FAILED) {
             close(fd_in);
-            perror("mmap_in");
+            perror("mmap 3");
             exit(1);
         }
         int start = 0;
         int count_of_strings = 0;
-
-        dup2(out, STDOUT_FILENO);
 
         while (offset < fileInInfo.st_size) {
             if (map_in[offset] == '\n') {
@@ -69,7 +61,7 @@ int main() {
                     text_len += strlen(string_responce);
                     text = realloc(text, sizeof(char) * text_len);
 
-                    for (int i = text_len - strlen(string_responce), j = 0; i < text_len; ++i, ++j) {
+                    for (size_t i = text_len - strlen(string_responce), j = 0; i < text_len; ++i, ++j) {
                         text[i] = string_responce[j];
                     }
                 }
@@ -78,13 +70,12 @@ int main() {
             ++offset;
         }
         printf("\n");
-    }
-    close(out);
 
-    if (munmap(map_in, fileInInfo.st_size) == -1) {
-        close(fd_in);
-        perror("Error un-mmap_inping the file");
-        exit(1);
+        if (munmap(map_in, fileInInfo.st_size) == -1) {
+            close(fd_in);
+            perror("Error un-mmap_inping the file 3");
+            exit(1);
+        }
     }
 
     close(fd_in);
@@ -113,14 +104,14 @@ int main() {
 
     if (ftruncate(fd_out, fileOutSizeNew) == -1) {
         close(fd_out);
-        perror("Error resizing the file");
+        perror("Error resizing the file 4");
         exit(1);
     }
 
     map_out = mmap(0, fileOutSizeNew, PROT_READ | PROT_WRITE, MAP_SHARED, fd_out, 0);
     if (map_out == MAP_FAILED) {
         close(fd_out);
-        perror("mmap");
+        perror("mmap 4");
         exit(1);
     }
     for (size_t i = 0; i < textOutSize; i++) {
