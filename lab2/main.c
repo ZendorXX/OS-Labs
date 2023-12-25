@@ -3,6 +3,7 @@
 #include <pthread.h>
 #include <time.h>
 #include <limits.h>
+#include <sys/time.h>
 
 #define MAX INT_MAX
 #define MIN INT_MIN
@@ -13,6 +14,11 @@ typedef struct {
     int min_value, max_value;
 } Thread_Arguments;
 
+int fibb(int n) {
+    if (n <= 1) return 1;
+    return fibb(n - 1) + fibb(n - 2);
+}
+
 void *solve(void *args) {
     Thread_Arguments *data = (Thread_Arguments*)args;
 
@@ -20,6 +26,8 @@ void *solve(void *args) {
     int min_tmp = MAX;
 
     for (size_t i = data->left; i < data->right; ++i) {
+        //int val = fibb(i % 40);
+
         if (data->array[i] > max_tmp) {
             max_tmp = data->array[i];
         } 
@@ -51,7 +59,7 @@ int main(int argc, char *argv[]) {
         printf("Invalid count of threads.\n");
         return -1;
     }
-
+    //size = 1000;
     int *array = (int*) calloc(size, sizeof(int));
     for (size_t i = 0; i < size; ++i) {
         fscanf(in, "%d", &array[i]);
@@ -62,14 +70,19 @@ int main(int argc, char *argv[]) {
 
     size_t step = size / (size_t) threads_count;
 
-    clock_t time = clock();
     for (int i = 0; i < threads_count; ++i) {
         args[i].array = array;
         args[i].left = step * i;
         args[i].right = (i == threads_count - 1) ? size : step * (i + 1);
         args[i].max_value = MIN;
         args[i].min_value = MAX;
+    }
 
+    //clock_t time = clock();
+    struct timeval stop, start;
+    gettimeofday(&start, NULL);
+    //clock_t begin = clock();
+    for (int i = 0; i < threads_count; ++i) {
         if ( pthread_create(&thread[i], NULL, solve, &args[i]) ) {
             perror("pthread_create");
             return -1;
@@ -94,9 +107,17 @@ int main(int argc, char *argv[]) {
             min_total = args[i].min_value;
         }
     }
-    time = clock() - time;
+    /*clock_t end = clock();
 
-    printf("%.10f\n", ((double) time) / CLOCKS_PER_SEC);
+    double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+    printf("%f\n", time_spent);*/
+
+    //time = clock() - time;
+    gettimeofday(&stop, NULL);
+    double work_time = (double)(stop.tv_sec - start.tv_sec) + (double)(stop.tv_usec - start.tv_usec) / 1000000.0;
+    printf("%lf\n", work_time);
+
+    //printf("%.10f\n", ((double) time) / CLOCKS_PER_SEC);
     printf("Min: %d, max: %d\n", min_total, max_total);
 
     free(array);
