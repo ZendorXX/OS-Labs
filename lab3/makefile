@@ -1,9 +1,8 @@
 CC = gcc
-CFLAGS = -Wall -Wextra
+CFLAGS = -Wall -Wextra -pedantic
 
 parent: child
 	$(CC) $(CFLAGS) -o parent.out parent.c
-	./parent.out
 
 child:
 	$(CC) $(CFLAGS) -o child.out child.c

@@ -17,6 +17,37 @@ int main() {
         exit(1);
     }
 
+    char* text = NULL;
+    size_t text_len = 0;
+
+    char* str = NULL;
+    size_t str_capacity = 0;
+
+    while (getline(&str, &str_capacity, stdin) != -1) {
+        text_len += strlen(str);
+        text = realloc(text, sizeof(char) * text_len);
+        for (size_t i = text_len - strlen(str), j = 0; i < text_len; ++i, ++j) {
+            text[i] = str[j];
+        }
+        str_capacity = 0;
+    }
+
+    char *write_map;
+    int write_fd;
+    struct stat fileInfo;
+    const char *filePath = "./mmapPtoC.txt";
+    size_t fileSizeOld, fileSizeNew, textSize;
+
+    if ((write_fd = open(filePath, O_RDWR | O_CREAT, 0664)) == -1) {
+        perror("open");
+        exit(1);
+    }
+
+    if (stat(filePath, &fileInfo) == -1) {
+        perror("stat");
+        exit(1);
+    }
+
     pid_t pid = fork();
     if (pid == -1) {
         perror("fork");
@@ -25,38 +56,6 @@ int main() {
 
     if (pid > 0) {
         // parent
-        char *write_map;
-        int write_fd;
-        struct stat fileInfo;
-        size_t fileSizeOld, fileSizeNew, textSize;
-        
-        char* text = NULL;
-        size_t text_len = 0;
-
-        char* str = NULL;
-        size_t str_capacity = 0;
-
-        while (getline(&str, &str_capacity, stdin) != -1) {
-            text_len += strlen(str);
-            text = realloc(text, sizeof(char) * text_len);
-            for (size_t i = text_len - strlen(str), j = 0; i < text_len; ++i, ++j) {
-                text[i] = str[j];
-            }
-            str_capacity = 0;
-        }
-
-        const char *filePath = "./mmapPtoC.txt";
-
-        if ((write_fd = open(filePath, O_RDWR | O_CREAT, 0664)) == -1) {
-            perror("open");
-            exit(1);
-        }
-
-        if (stat(filePath, &fileInfo) == -1) {
-            perror("stat");
-            exit(1);
-        }
-
         fileSizeOld = fileInfo.st_size;
         
         textSize = strlen(text);
@@ -92,42 +91,7 @@ int main() {
 
         wait(NULL);
 
-        char *read_map;
-        int read_fd, offset_in = 0;
-        struct stat read_file_info;
 
-        const char *read_file_path = "./mmapCtoP.txt";
-
-        if ((read_fd = open(read_file_path, O_RDWR | O_CREAT, 0664)) == -1) {
-            perror("open");
-            exit(1);
-        }
-
-        if (stat(read_file_path, &read_file_info) == -1) {
-            perror("stat");
-            exit(1);
-        }
-
-        //while(read_file_info.st_size <= 0);
-        
-        read_map = mmap(0, read_file_info.st_size, PROT_READ, MAP_SHARED, read_fd, 0);
-        if (read_map == MAP_FAILED) {
-            close(read_fd);
-            perror("mmap 2");
-            exit(1);
-        }
-
-        while (offset_in < read_file_info.st_size) {
-            printf("%c", read_map[offset_in]);
-            offset_in++;
-        }
-        
-        if (munmap(read_map, read_file_info.st_size) == -1) {
-            close(read_fd);
-            perror("Error un-mmapping the file 2");
-            exit(1);
-        }
-        close(read_fd);
     }
     else {
         // child
@@ -135,5 +99,40 @@ int main() {
         execl("child.out", "child.out", NULL);
     }
 
+    char *read_map;
+    int read_fd, offset_in = 0;
+    struct stat read_file_info;
+
+    const char *read_file_path = "./mmapCtoP.txt";
+
+    if ((read_fd = open(read_file_path, O_RDWR | O_CREAT, 0664)) == -1) {
+        perror("open");
+        exit(1);
+    }
+
+    if (stat(read_file_path, &read_file_info) == -1) {
+        perror("stat");
+        exit(1);
+    }
+    
+    read_map = mmap(0, read_file_info.st_size, PROT_READ, MAP_SHARED, read_fd, 0);
+    if (read_map == MAP_FAILED) {
+        close(read_fd);
+        perror("mmap 2");
+        exit(1);
+    }
+
+    while (offset_in < read_file_info.st_size) {
+        printf("%c", read_map[offset_in]);
+        offset_in++;
+    }
+    
+    if (munmap(read_map, read_file_info.st_size) == -1) {
+        close(read_fd);
+        perror("Error un-mmapping the file 2");
+        exit(1);
+    }
+    
+    close(read_fd);
     close(out);
 }
