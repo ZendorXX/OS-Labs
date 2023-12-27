@@ -1,7 +1,7 @@
 #include "BalancedBinaryTree.h"
 
 Node* createNode(int data) {
-    Node* newNode = (Node*)malloc(sizeof(Node));
+    Node *newNode = (Node*)malloc(sizeof(Node));
 
     newNode->data = data;
     newNode->left = NULL;

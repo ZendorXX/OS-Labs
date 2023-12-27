@@ -15,5 +15,8 @@ main: BalancedBinaryTree.o
 BalancedBinaryTree:
 	$(CC) $(CFLAGS) -c BalancedBinaryTree.c
 
+timer:
+	$(CC) $(CFLAGS) timer.c -o timer.out
+
 clear:
 	rm -f *.out *.so *.o
