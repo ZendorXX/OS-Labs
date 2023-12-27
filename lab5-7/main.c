@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "BalancedBinaryTree.h"
+#include "timer.h"
 
 int main() {
     Node *root = createNode(6);
@@ -38,6 +39,31 @@ int main() {
     printTree(root2);
 
     free(root);
-    free(root2);   
+    free(root2);  
+
+    Timer *timer = createTimer();
+    char command[10];
+
+    while (1) {
+        printf("> ");
+        scanf("%s", command);
+
+        if (strcmp(command, "exec") == 0) {
+            scanf("%s", command);
+
+            if (strcmp(command, "start") == 0) {
+                startTimer(timer);
+            } else if (strcmp(command, "stop") == 0) {
+                stopTimer(timer);
+            } else if (strcmp(command, "time") == 0) {
+                showTime(timer);
+            } else {
+                printf("Ошибка: недопустимая команда\n");
+            }
+        } else {
+            printf("Ошибка: недопустимая команда\n");
+        }
+    }
+
     return 0;
 }

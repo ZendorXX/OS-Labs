@@ -1,15 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/time.h>
-#include <string.h>
+#include "timer.h"
 
-typedef struct {
-    int is_running;
-    struct timeval start_time;
-    long elapsed_time;
-} Timer;
-
-Timer *createTimer() {
+Timer* createTimer() {
     Timer *newTimer = (Timer*)malloc(sizeof(Timer));
     newTimer->is_running = 0;
     newTimer->elapsed_time = 0;
@@ -55,32 +46,4 @@ void showTime(Timer* timer) {
     } else {
         printf("Ошибка: недопустимый идентификатор таймера\n");
     }
-}
-
-int main() {
-    Timer *timer = createTimer();
-    char command[10];
-
-    while (1) {
-        printf("> ");
-        scanf("%s", command);
-
-        if (strcmp(command, "exec") == 0) {
-            scanf("%s", command);
-
-            if (strcmp(command, "start") == 0) {
-                startTimer(timer);
-            } else if (strcmp(command, "stop") == 0) {
-                stopTimer(timer);
-            } else if (strcmp(command, "time") == 0) {
-                showTime(timer);
-            } else {
-                printf("Ошибка: недопустимая команда\n");
-            }
-        } else {
-            printf("Ошибка: недопустимая команда\n");
-        }
-    }
-
-    return 0;
 }
