@@ -1,5 +1,5 @@
-CC = gcc
+CXX = g++
 CFLAGS = -Wall -Wextra -pedantic
 
 main:
-	$(CC) $(CFLAGS) main.c -lpthread -lm -o main.out
+	$(CXX) $(CFLAGS) main.cpp -lpthread -lm -o main.out

@@ -4,4 +4,5 @@
 *.out
 *.so
 *.o
-array.txt
+lab2/total.txt
+lab2/array_tmp.txt
