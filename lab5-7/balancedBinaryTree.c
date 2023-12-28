@@ -1,4 +1,4 @@
-#include "BalancedBinaryTree.h"
+#include "balancedBinaryTree.h"
 
 Node* createNode(int data) {
     Node *newNode = (Node*)malloc(sizeof(Node));
@@ -10,47 +10,33 @@ Node* createNode(int data) {
     return newNode;
 }
 
-Node* buildBalancedTree(int arr[], int start, int end) {
-    if (start > end) {
-        return NULL;
-    }
-
-    int mid = (start + end) / 2;
-
-    Node *root = createNode(arr[mid]);
-
-    root->left = buildBalancedTree(arr, start, mid - 1);
-    root->right = buildBalancedTree(arr, mid + 1, end);
-
-    return root;
-}
-
-void printInOrder(Node *node) {
-    if (node == NULL) {
+void printInOrder(Node *root, int height) {
+    if (root == NULL) {
         return;
     }
 
-    printInOrder(node->left);
-    printf("%d ", node->data);
-    printInOrder(node->right);
+    printInOrder(root->left, height + 1);
+    printf("%*s%d\n", 4 * height, "", root->data);
+    printInOrder(root->right, height + 1);
 }
 
-void inOrderTraversal(Node *node, int height) {
-    if (node == NULL) {
+void printTree(Node *root) {
+    if (root == NULL) {
         return;
     }
 
-    inOrderTraversal(node->left, height + 1);
-    printf("%*s%d\n", 4 * height, "", node->data);
-    inOrderTraversal(node->right, height + 1);
+    printInOrder(root, 0);
 }
 
-void printTree(Node *node) {
-    if (node == NULL) {
+void deleteTree(Node *root) {
+    if (root == NULL) {
         return;
     }
 
-    inOrderTraversal(node, 0);
+    deleteTree(root->left);
+    deleteTree(root->right);
+
+    free(root);
 }
 
 int getHeight(Node *node) {
@@ -129,45 +115,7 @@ Node* balanceTree(Node *root) {
 
     return root;
 }
-
-Node* findMinValueNode(Node *node) {
-    Node *current = node;
-    while (current && current->left != NULL) {
-        current = current->left;
-    }
-    return current;
-}
-
-Node* deleteNode(Node *root, int key) {
-    if (root == NULL) {
-        return NULL;
-    }
-
-    if (key < root->data) {
-        root->left = deleteNode(root->left, key);
-    }
-    else if (key > root->data) {
-        root->right = deleteNode(root->right, key);
-    }
-    else {
-        if (root->left == NULL) {
-            Node *tmp = root->right;
-            free(root);
-            return tmp;
-        }
-        else if (root->right == NULL) {
-            Node *tmp = root->left;
-            free(root);
-            return tmp;
-        }
-
-        Node *tmp = findMinValueNode(root->right);
-        root->data = tmp->data;
-        root->right = deleteNode(root->right, tmp->data);
-    }
-
-    return balanceTree(root);
-} 
+ 
 
 Node* insert(Node *root, int data) {
     if (root == NULL) {
@@ -182,4 +130,17 @@ Node* insert(Node *root, int data) {
     }
 
     return balanceTree(root);
+}
+
+Node* search(Node *root, int data) {
+    if (root == NULL || root->data == data) {
+        return root;
+    }
+
+    if (data < root->data) {
+        return search(root->left, data);
+    }
+    else {
+        return search(root->right, data);
+    }
 }

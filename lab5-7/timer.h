@@ -17,9 +17,7 @@ Timer* createTimer();
 long getCurrentTime();
 
 void startTimer(Timer* timer);
-
 void stopTimer(Timer* timer);
-
 void showTime(Timer* timer);
 
 #endif
