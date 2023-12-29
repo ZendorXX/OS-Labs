@@ -1,6 +1,3 @@
-#ifndef TIMER_H
-#define TIMER_H
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
@@ -18,6 +15,4 @@ long getCurrentTime();
 
 void startTimer(Timer* timer);
 void stopTimer(Timer* timer);
-void showTime(Timer* timer);
-
-#endif
+long showTime(Timer* timer);

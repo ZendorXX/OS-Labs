@@ -1,25 +1,16 @@
-CC = gcc
-CFLAGS = -Wall -Wextra -pedantic -g
+CC = g++
+FLAGS = -Wall -Wextra -ggdb
+ZMQ = `pkg-config --libs libzmq`
 
-all: server client main
 
-server:
-	$(CC) $(CFLAGS) server.c -lzmq -o server.out
+main: main.cpp btree.hpp child
+	$(CC) $(FLAGS) -o main.out main.cpp btree.hpp $(ZMQ)
 
-client:
-	$(CC) $(CFLAGS) client.c -lzmq -o client.out
-
-main: calculationNode balancedBinaryTree.o
-	$(CC) $(CFLAGS) main.c -lzmq -o main.out balancedBinaryTree.o
-
-calculationNode: timer.o
-	$(CC) $(CFLAGS) calculationNode.c -lzmq -o calculationNode.out timer.o
-
-balancedBinaryTree:
-	$(CC) $(CFLAGS) -c balancedBinaryTree.c
+child: child.cpp timer.o
+	$(CC) $(FLAGS) -o child.out child.cpp timer.o $(ZMQ)
 
 timer:
-	$(CC) $(CFLAGS) -c timer.c
-
-clear:
-	rm -f *.out *.so *.o
+	$(CC) $(FLAGS) -c timer.cpp
+	
+clean:
+	rm -rf *.out
