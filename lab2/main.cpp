@@ -38,12 +38,7 @@ void *solve(void *args) {
     return NULL;
 }
 
-int main(int argc, char *argv[]) {
-    /*if (argc != 2) {
-        printf("Give count of threads as argument.\n");
-        return 0;
-    }*/
-
+int main() {
     FILE *in = fopen("total.txt", "r");
     FILE *out = fopen("execution_data.txt", "w");
 

@@ -53,6 +53,9 @@ int main() {
             scanf("%d", &K);
             printf("%f\n", pi(K));
         }
+        else if (cmd == 3) {
+            return 0;
+        }
         else {
             printf("Wrong argument\n");
         }

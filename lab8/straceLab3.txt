@@ -1,0 +1,141 @@
+zendroix@zendroix-ASUSLaptop:~/Coding/Labs/OS/lab3$ strace -f ./parent.out
+execve("./parent.out", ["./parent.out"], 0x7ffcc16c67f8 /* 77 vars */) = 0
+brk(NULL)                               = 0x561a5e4dc000
+arch_prctl(0x3001 /* ARCH_??? */, 0x7ffc8ce54f70) = -1 EINVAL (Недопустимый аргумент)
+mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7fd6f9904000
+access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (Нет такого файла или каталога)
+openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+newfstatat(3, "", {st_mode=S_IFREG|0644, st_size=89529, ...}, AT_EMPTY_PATH) = 0
+mmap(NULL, 89529, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7fd6f98ee000
+close(3)                                = 0
+openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
+read(3, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\220\202\2\0\0\0\0\0"..., 832) = 832
+pread64(3, "\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0"..., 784, 64) = 784
+newfstatat(3, "", {st_mode=S_IFREG|0755, st_size=2105184, ...}, AT_EMPTY_PATH) = 0
+pread64(3, "\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0"..., 784, 64) = 784
+mmap(NULL, 2150256, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7fd6f9600000
+mmap(0x7fd6f9626000, 1568768, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x26000) = 0x7fd6f9626000
+mmap(0x7fd6f97a5000, 348160, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1a5000) = 0x7fd6f97a5000
+mmap(0x7fd6f97fa000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1f9000) = 0x7fd6f97fa000
+mmap(0x7fd6f9800000, 53104, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7fd6f9800000
+close(3)                                = 0
+mmap(NULL, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7fd6f98eb000
+arch_prctl(ARCH_SET_FS, 0x7fd6f98eb740) = 0
+set_tid_address(0x7fd6f98eba10)         = 5518
+set_robust_list(0x7fd6f98eba20, 24)     = 0
+rseq(0x7fd6f98ec060, 0x20, 0, 0x53053053) = 0
+mprotect(0x7fd6f97fa000, 16384, PROT_READ) = 0
+mprotect(0x561a5dba4000, 4096, PROT_READ) = 0
+mprotect(0x7fd6f993b000, 8192, PROT_READ) = 0
+prlimit64(0, RLIMIT_STACK, NULL, {rlim_cur=8192*1024, rlim_max=RLIM64_INFINITY}) = 0
+munmap(0x7fd6f98ee000, 89529)           = 0
+openat(AT_FDCWD, "data.txt", O_RDWR)    = 3
+getrandom("\xc2\x0c\x26\x11\x39\x95\xb0\x18", 8, GRND_NONBLOCK) = 8
+brk(NULL)                               = 0x561a5e4dc000
+brk(0x561a5e4fd000)                     = 0x561a5e4fd000
+newfstatat(0, "", {st_mode=S_IFCHR|0620, st_rdev=makedev(0x88, 0x1), ...}, AT_EMPTY_PATH) = 0
+read(0, fb gbgb gfb;
+"fb gbgb gfb;\n", 1024)         = 13
+read(0, gvgbgfbg.
+"gvgbgfbg.\n", 1024)            = 10
+read(0, ggvbgbfbh;
+"ggvbgbfbh;\n", 1024)           = 11
+read(0, gb hb hk
+"gb hb hk\n", 1024)             = 9
+read(0, bgbghbh
+"bgbghbh\n", 1024)              = 8
+read(0, "", 1024)                       = 0
+openat(AT_FDCWD, "./mmapPtoC.txt", O_RDWR|O_CREAT, 0664) = 4
+newfstatat(AT_FDCWD, "./mmapPtoC.txt", {st_mode=S_IFREG|0664, st_size=33, ...}, 0) = 0
+clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLDstrace: Process 5560 attached
+, child_tidptr=0x7fd6f98eba10) = 5560
+[pid  5560] set_robust_list(0x7fd6f98eba20, 24) = 0
+[pid  5518] ftruncate(4, 84 <unfinished ...>
+[pid  5560] dup2(3, 1 <unfinished ...>
+[pid  5518] <... ftruncate resumed>)    = 0
+[pid  5560] <... dup2 resumed>)         = 1
+[pid  5518] mmap(NULL, 84, PROT_READ|PROT_WRITE, MAP_SHARED, 4, 0 <unfinished ...>
+[pid  5560] execve("child.out", ["child.out"], 0x7ffc8ce550d8 /* 77 vars */ <unfinished ...>
+[pid  5518] <... mmap resumed>)         = 0x7fd6f9903000
+[pid  5518] msync(0x7fd6f9903000, 84, MS_SYNC <unfinished ...>
+[pid  5560] <... execve resumed>)       = 0
+[pid  5560] brk(NULL)                   = 0x555a51e76000
+[pid  5560] arch_prctl(0x3001 /* ARCH_??? */, 0x7ffc5e494130) = -1 EINVAL (Недопустимый аргумент)
+[pid  5560] mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f2cb0513000
+[pid  5560] access("/etc/ld.so.preload", R_OK) = -1 ENOENT (Нет такого файла или каталога)
+[pid  5560] openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC <unfinished ...>
+[pid  5518] <... msync resumed>)        = 0
+[pid  5560] <... openat resumed>)       = 5
+[pid  5518] munmap(0x7fd6f9903000, 84 <unfinished ...>
+[pid  5560] newfstatat(5, "",  <unfinished ...>
+[pid  5518] <... munmap resumed>)       = 0
+[pid  5560] <... newfstatat resumed>{st_mode=S_IFREG|0644, st_size=89529, ...}, AT_EMPTY_PATH) = 0
+[pid  5518] close(4 <unfinished ...>
+[pid  5560] mmap(NULL, 89529, PROT_READ, MAP_PRIVATE, 5, 0 <unfinished ...>
+[pid  5518] <... close resumed>)        = 0
+[pid  5560] <... mmap resumed>)         = 0x7f2cb04fd000
+[pid  5518] wait4(-1,  <unfinished ...>
+[pid  5560] close(5)                    = 0
+[pid  5560] openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 5
+[pid  5560] read(5, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\220\202\2\0\0\0\0\0"..., 832) = 832
+[pid  5560] pread64(5, "\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0"..., 784, 64) = 784
+[pid  5560] newfstatat(5, "", {st_mode=S_IFREG|0755, st_size=2105184, ...}, AT_EMPTY_PATH) = 0
+[pid  5560] pread64(5, "\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0"..., 784, 64) = 784
+[pid  5560] mmap(NULL, 2150256, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 5, 0) = 0x7f2cb0200000
+[pid  5560] mmap(0x7f2cb0226000, 1568768, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 5, 0x26000) = 0x7f2cb0226000
+[pid  5560] mmap(0x7f2cb03a5000, 348160, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 5, 0x1a5000) = 0x7f2cb03a5000
+[pid  5560] mmap(0x7f2cb03fa000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 5, 0x1f9000) = 0x7f2cb03fa000
+[pid  5560] mmap(0x7f2cb0400000, 53104, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7f2cb0400000
+[pid  5560] close(5)                    = 0
+[pid  5560] mmap(NULL, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f2cb04fa000
+[pid  5560] arch_prctl(ARCH_SET_FS, 0x7f2cb04fa740) = 0
+[pid  5560] set_tid_address(0x7f2cb04faa10) = 5560
+[pid  5560] set_robust_list(0x7f2cb04faa20, 24) = 0
+[pid  5560] rseq(0x7f2cb04fb060, 0x20, 0, 0x53053053) = 0
+[pid  5560] mprotect(0x7f2cb03fa000, 16384, PROT_READ) = 0
+[pid  5560] mprotect(0x555a50e99000, 4096, PROT_READ) = 0
+[pid  5560] mprotect(0x7f2cb054a000, 8192, PROT_READ) = 0
+[pid  5560] prlimit64(0, RLIMIT_STACK, NULL, {rlim_cur=8192*1024, rlim_max=RLIM64_INFINITY}) = 0
+[pid  5560] munmap(0x7f2cb04fd000, 89529) = 0
+[pid  5560] openat(AT_FDCWD, "./mmapPtoC.txt", O_RDWR|O_CREAT, 0664) = 5
+[pid  5560] newfstatat(AT_FDCWD, "./mmapPtoC.txt", {st_mode=S_IFREG|0664, st_size=84, ...}, 0) = 0
+[pid  5560] mmap(NULL, 84, PROT_READ, MAP_SHARED, 5, 0) = 0x7f2cb0512000
+[pid  5560] newfstatat(1, "", {st_mode=S_IFREG|0664, st_size=22, ...}, AT_EMPTY_PATH) = 0
+[pid  5560] getrandom("\x08\xf9\x0e\x3f\xb3\xab\x4d\x45", 8, GRND_NONBLOCK) = 8
+[pid  5560] brk(NULL)                   = 0x555a51e76000
+[pid  5560] brk(0x555a51e97000)         = 0x555a51e97000
+[pid  5560] munmap(0x7f2cb0512000, 84)  = 0
+[pid  5560] close(5)                    = 0
+[pid  5560] openat(AT_FDCWD, "./mmapCtoP.txt", O_RDWR|O_CREAT, 0664) = 5
+[pid  5560] newfstatat(AT_FDCWD, "./mmapCtoP.txt", {st_mode=S_IFREG|0664, st_size=46, ...}, 0) = 0
+[pid  5560] ftruncate(5, 138)           = 0
+[pid  5560] mmap(NULL, 138, PROT_READ|PROT_WRITE, MAP_SHARED, 5, 0) = 0x7f2cb0512000
+[pid  5560] msync(0x7f2cb0512000, 138, MS_SYNC) = 0
+[pid  5560] munmap(0x7f2cb0512000, 138) = 0
+[pid  5560] close(5)                    = 0
+[pid  5560] write(1, "cfvgbgbb.\nvfvgfvgfb;\nfb gbgb gfb"..., 56) = 56
+[pid  5560] exit_group(0)               = ?
+[pid  5560] +++ exited with 0 +++
+<... wait4 resumed>NULL, 0, NULL)       = 5560
+--- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=5560, si_uid=1000, si_status=0, si_utime=0, si_stime=0} ---
+openat(AT_FDCWD, "./mmapCtoP.txt", O_RDWR|O_CREAT, 0664) = 4
+newfstatat(AT_FDCWD, "./mmapCtoP.txt", {st_mode=S_IFREG|0664, st_size=138, ...}, 0) = 0
+mmap(NULL, 138, PROT_READ, MAP_SHARED, 4, 0) = 0x7fd6f9903000
+newfstatat(1, "", {st_mode=S_IFCHR|0620, st_rdev=makedev(0x88, 0x1), ...}, AT_EMPTY_PATH) = 0
+write(1, "3 string isn't correct\n", 233 string isn't correct
+) = 23
+write(1, "4 string isn't correct\n", 234 string isn't correct
+) = 23
+write(1, "3 string isn't correct\n", 233 string isn't correct
+) = 23
+write(1, "4 string isn't correct\n", 234 string isn't correct
+) = 23
+write(1, "8 string isn't correct\n", 238 string isn't correct
+) = 23
+write(1, "9 string isn't correct\n", 239 string isn't correct
+) = 23
+munmap(0x7fd6f9903000, 138)             = 0
+close(4)                                = 0
+close(3)                                = 0
+exit_group(0)                           = ?
++++ exited with 0 +++
