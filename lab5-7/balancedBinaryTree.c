@@ -144,3 +144,21 @@ Node* search(Node *root, int data) {
         return search(root->right, data);
     }
 }
+
+int pathToNode(Node *root, int data, int path[], int index) {
+    if (root == NULL) {
+        return 0;
+    }
+
+    path[index++] = root->data;
+
+    if (data == root->data) {
+        return index;
+    }
+    else if (data < root->data) {
+        return pathToNode(root->left, data, path, index);
+    } 
+    else {
+        return pathToNode(root->right, data, path, index); 
+    }
+}

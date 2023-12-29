@@ -25,5 +25,6 @@ void deleteTree(Node *root);
 
 int getHeight(Node *node);
 int isBalanced(Node *node);
+int pathToNode(Node *root, int data, int *path, int index);
 
 #endif

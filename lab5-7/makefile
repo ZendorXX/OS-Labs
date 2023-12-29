@@ -10,10 +10,10 @@ client:
 	$(CC) $(CFLAGS) client.c -lzmq -o client.out
 
 main: calculationNode balancedBinaryTree.o
-	$(CC) $(CFLAGS) main.c -o main.out balancedBinaryTree.o
+	$(CC) $(CFLAGS) main.c -lzmq -o main.out balancedBinaryTree.o
 
 calculationNode: timer.o
-	$(CC) $(CFLAGS) calculationNode.c -o calculationNode.out timer.o
+	$(CC) $(CFLAGS) calculationNode.c -lzmq -o calculationNode.out timer.o
 
 balancedBinaryTree:
 	$(CC) $(CFLAGS) -c balancedBinaryTree.c

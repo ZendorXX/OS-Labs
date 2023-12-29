@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <zmq.h>
+#include <assert.h>
+#include <pthread.h>
 
 #include "balancedBinaryTree.h"
 #include "timer.h"
@@ -109,8 +112,32 @@ char** split(char *str, char symbol) {
     return result;
 }
 
+char* intToStr(int number) {
+    int number_lenght = snprintf(NULL, 0, "%d", number);
+    char *result = (char*)malloc(number_lenght + 1);
+    snprintf(result, number_lenght + 1, "%d", number);
+    return result;
+}
+
+void create_msg(zmq_msg_t *zmq_msg, char *msg) {
+    zmq_msg_init_size(zmq_msg, sizeof(msg));
+    memcpy(zmq_msg_data(zmq_msg), msg, sizeof(msg));
+}
+
+void send_msg(void *socket, char *msg){
+	zmq_msg_t zmq_msg;
+	create_msg(&zmq_msg, msg);
+	if(!zmq_msg_send(&zmq_msg, socket, 0)) {
+        printf("Can not send message");
+    }
+	zmq_msg_close(&zmq_msg);
+}
 
 int main() {
+    void *context = zmq_ctx_new();
+    void *root_socket = zmq_socket(context, ZMQ_REQ);
+    zmq_connect(root_socket, "ipc:///tmp/lab5-7_0");
+
     Node *tree = NULL;
 
     char *cmd = NULL;
@@ -134,7 +161,7 @@ int main() {
         }
 
         if (strcmp(cmd_splited[0], "exit") == 0) {
-            return 0;
+            break;
         }
         else if (strcmp(cmd_splited[0], "print") == 0) {
             printTree(tree);
@@ -144,24 +171,95 @@ int main() {
             int id = strtol(cmd_splited[1], &eptr, 10);
             Node *res = search(tree, id);
             if (res != NULL) { 
-                printf("Calculation node with this id already exist\n");
+                printf("Error: Already exists\n");
             }
-            tree = insert(tree, id);
+
+            char *template = "ipc:///tmp/lab5-7_";
+            char *id_str = intToStr(id);
+            char *socet_path = (char*)malloc(strlen(template) + strlen(id_str) + 1);
+            strcpy(socet_path, template);
+            strcat(socet_path, id_str);
+            
+            pid_t calculationNodePid = fork();
+            if (calculationNodePid == -1) {
+                printf("Error: Fork\n");
+            }
+            else if (calculationNodePid == 0) {
+                if (execl("./calculationNode.out", "./calculationNode.out", socet_path, NULL) == -1) {
+                    printf("Error: Execl");
+                }
+            }
+            else {
+                printf("Ok: %d\n", calculationNodePid);
+                tree = insert(tree, id);
+            }
         } 
         else if (strcmp(cmd_splited[0], "exec") == 0) {
-            pid_t proc = fork();
-            if (proc == 0) {
-                execl("./calculationNode.out", "./calculationNode.out", cmd_splited[2], NULL);
+            char *eptr;
+            int id = strtol(cmd_splited[1], &eptr, 10);
+            Node *res = search(tree, id);
+            if (res == NULL) { 
+                printf("Error: Not found\n");
             }
+
+            int *path = (int*)malloc(sizeof(int) * getHeight(tree));
+            int path_len = pathToNode(tree, id, path, 0);
+
+            char *message = NULL;
+            int message_len = 0;
+
+            for (int i = 0; i < path_len; ++i) {
+                char *template = " ";
+
+                char *number_to_str = intToStr(path[i]);
+
+                char *str_responce = malloc(strlen(number_to_str) + strlen(template) + 1);
+                strcpy(str_responce, number_to_str);
+                strcat(str_responce, template);
+
+                message_len += strlen(str_responce);
+                message = realloc(message, sizeof(char) * message_len);
+
+                for (int i = message_len - strlen(str_responce), j = 0; i < message_len; ++i, ++j) {
+                    message[i] = str_responce[j];
+                }
+            }
+
+            message_len += 1;
+            message = realloc(message, sizeof(char) * message_len);
+            message[message_len - 2] = '\n';
+            message[message_len - 1] = '\0';
+
+            //send_msg(root_socket, message);
+            printf("Sending from control: %s\n", message);
+            zmq_send(root_socket, message, message_len, 0);
+
+            char buffer[10];
+            zmq_recv(root_socket, buffer, 10, 0);
+            printf("Recieve in control_node: %s\n", buffer);
+
+            /*zmq_send(responder, message, message_len, 0);
+            sleep(1);
+            
+            char buffer[10];
+            zmq_recv(responder, buffer, 10, 0);
+            printf("Recieve in control_node: %s\n", buffer);*/
+
+            free(path);
+            free(message);
         } 
         else if (strcmp(cmd_splited[0], "ping") == 0) {
             printf("Ping\n");
+        }
+        else {
+            printf("Unknown command\n");
         }
 
         cmd_capacity = 0;
     }
 
     deleteTree(tree);
-
+    zmq_close (root_socket);
+    zmq_ctx_destroy (context);
     return 0;
 }
