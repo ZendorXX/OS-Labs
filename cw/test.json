@@ -1,0 +1,33 @@
+{
+    "jobs_number": 6,
+    "job_1": {
+        "id": 1,
+        "parent": 4,
+        "path": "./job"
+    },
+    "job_2": {
+        "id": 2,
+        "parent": 4,
+        "path": "./job"
+    },
+    "job_3": {
+        "id": 3,
+        "parent": 5,
+        "path": "./job"
+    },
+    "job_4": {
+        "id": 4,
+        "parent": 6,
+        "path": "./job"
+    },
+    "job_5": {
+        "id": 5,
+        "parent": 6,
+        "path": "./job"
+    },
+    "job_6": {
+        "id": 6,
+        "parent": 0,
+        "path": "./job"
+    }
+}
